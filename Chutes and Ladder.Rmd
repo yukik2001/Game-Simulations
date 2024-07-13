@@ -13,7 +13,6 @@ The first player to land exactly on space 100 wins the game.
 source("Chutes and Ladder Script.R")  # edit with your file name
 ```
 
-\pagebreak
 
 # Part 1: Board representation
 
@@ -27,7 +26,6 @@ board <- list(dimention = c(10,10),
                             c(87, 24), c(93, 73), c(95, 75), c(98, 78)))
 ```
 
-\pagebreak
 
 # Part 2: Plot of Game board
 
@@ -39,7 +37,6 @@ show_board(board)
 # Chutes are shown as red arrows
 ```
 
-\pagebreak
 
 # Part 3: Miniboards
 
@@ -54,7 +51,6 @@ par(mar = c(0, 0, 0, 0))
 show_board(miniboard1)
 ```
 
-\pagebreak
 ```{r, error = TRUE}
 miniboard2 <- list(dimention = c(7, 9), 
               ladders = list(c(9, 22), c(13, 30), c(24, 37), c(29, 41), c(33, 39), c(43, 54)), 
@@ -63,7 +59,6 @@ par(mar = c(0, 0, 0, 0))
 show_board(miniboard2)
 ```
 
-\pagebreak
 ```{r, error = TRUE}
 miniboard3 <- list(dimention = c(8, 9), 
               ladders = list(), 
@@ -72,7 +67,6 @@ par(mar = c(0, 0, 0, 0))
 show_board(miniboard3)
 ```
 
-\pagebreak
 
 # Part 4: Verbose output of one single player game
 
@@ -80,8 +74,6 @@ show_board(miniboard3)
 set.seed(5)
 play_solo(board, verbose = TRUE)
 ```
-
-\pagebreak
 
 # Part 5: Monte Carlo Simulation
 
@@ -108,7 +100,6 @@ hist(turn_vec, breaks = 50, col = rainbow(7),
      xlab = "Number of Turns")
 ```
 
-\pagebreak
 - Find the minimum number of turns. How many times out of 10,000 did a game finish with the minimum number of turns?
 
 ```{r}
@@ -147,7 +138,6 @@ sum(turn_vec <= 10) / 10000
 ladder_total[9] / sum(ladder_total)
 ```
 
-\pagebreak
 - Create a barplot of the relative frequency of how often each chute is utilized.
 ```{r}
 barplot(chute_total / sum(chute_total), col = rainbow(9), 
@@ -156,7 +146,6 @@ title("Relative Frequency of each Chute")
 axis(1, seq(0.7, 12.3, 1.2), 1:10)
 ```
 
-\pagebreak
 - Create a barplot of the relative frequency of how often each ladder is utilized. 
 ```{r}
 barplot(ladder_total / sum(ladder_total), col = rainbow(9), 
@@ -166,9 +155,7 @@ axis(1, seq(0.7, 11.1, 1.2), 1:9)
 ```
 
 
-\pagebreak
-
-# Heat Maps of the game board for each rolls 
+# Part 6: Heat Maps of the game board for each rolls 
 On the datagenetics web page, under the section “Transition Matrix” there are plots showing a ‘heat map’ of which squares are landed on after one turn, after two turns, after three rolls, etc. Recreated this plot in own codes. 
 
 ```{r, error = TRUE}
@@ -296,43 +283,36 @@ Color_plot <- function(number, turns) {
 }
 ```
 
-\pagebreak
 One Roll
 ```{r, error = TRUE}
 Color_plot(number, 1)
 ```
 
-\pagebreak
 Two Rolls
 ```{r, error = TRUE}
 Color_plot(number, 2)
 ```
 
-\pagebreak
 Three Rolls
 ```{r, error = TRUE}
 Color_plot(number, 3)
 ```
 
-\pagebreak
 Four Rolls
 ```{r, error = TRUE}
 Color_plot(number, 4)
 ```
 
-\pagebreak
 Five Rolls
 ```{r, error = TRUE}
 Color_plot(number, 5)
 ```
 
-\pagebreak
 Six Rolls
 ```{r, error = TRUE}
 Color_plot(number, 6)
 ```
 
-\pagebreak
 Seven Rolls
 ```{r, error = TRUE}
 Color_plot(number, 7)
