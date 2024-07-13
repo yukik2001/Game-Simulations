@@ -1,0 +1,340 @@
+---
+title: "Stats 102A - Homework 2 - Output File"
+author: "Yuki Kitamura"
+output: pdf_document
+---
+
+This is a simulation of the children’s board game, Chutes and Ladders.
+Rules:
+Players spin a spinner with number 1 through 6. Players move their piece that many spaces. Some spaces have ladders, and the player moves to a new location on the board. If you land at the bottom of a ladder, you move to the top of the ladder. Some spaces have chutes (slides) which causes the player to move backward. If you land at the top of a chute, you move to the bottom of the chute. The start/end of a chute/ladder has a picture on the given space (there is no ambiguity).
+The first player to land exactly on space 100 wins the game.
+
+```{r, error = TRUE}
+source("Chutes and Ladder Script.R")  # edit with your file name
+```
+
+\pagebreak
+
+# Part 1: Board representation
+
+Create a single list object called `board` where you store the features of the game board in R.
+
+```{r, error = TRUE}
+board <- list(dimention = c(10,10), 
+              ladders = list(c(1, 38), c(4, 14), c(9, 31), c(21, 42), c(28, 84), c(36, 44), 
+                             c(51, 67), c(71, 91), c(80, 100)), 
+              chutes = list(c(16, 6), c(47, 26), c(49, 11), c(56, 53), c(62, 19), c(64,60),
+                            c(87, 24), c(93, 73), c(95, 75), c(98, 78)))
+```
+
+\pagebreak
+
+# Part 2: Plot of Game board
+
+```{r, error = TRUE}
+# using par() to help the plot be more visible
+par(mar = c(0, 0, 0, 0)) 
+show_board(board)
+# Ladders are shown as green arrows
+# Chutes are shown as red arrows
+```
+
+\pagebreak
+
+# Part 3: Miniboards
+
+Create the `miniboard` objects and plots.
+# code demonstration for different board sizes
+
+```{r, error = TRUE}
+miniboard1 <- list(dimention = c(6, 7), 
+              ladders = list(c(1, 23), c(9, 27), c(20, 31), c(33, 41)), 
+              chutes = list(c(16, 6), c(30, 18), c(35, 24), c(40, 26)))
+par(mar = c(0, 0, 0, 0))
+show_board(miniboard1)
+```
+
+\pagebreak
+```{r, error = TRUE}
+miniboard2 <- list(dimention = c(7, 9), 
+              ladders = list(c(9, 22), c(13, 30), c(24, 37), c(29, 41), c(33, 39), c(43, 54)), 
+              chutes = list(c(16, 3), c(31, 15), c(35, 21), c(62, 48)))
+par(mar = c(0, 0, 0, 0))
+show_board(miniboard2)
+```
+
+\pagebreak
+```{r, error = TRUE}
+miniboard3 <- list(dimention = c(8, 9), 
+              ladders = list(), 
+              chutes = list())
+par(mar = c(0, 0, 0, 0))
+show_board(miniboard3)
+```
+
+\pagebreak
+
+# Part 4: Verbose output of one single player game
+
+```{r, error = TRUE}
+set.seed(5)
+play_solo(board, verbose = TRUE)
+```
+
+\pagebreak
+
+# Part 5: Monte Carlo Simulation
+
+```{r, error = TRUE}
+turn_vec <- numeric(10000)
+chute_total <- numeric(length(board[[3]]))
+ladder_total <- numeric(length(board[[2]]))
+
+# Simulate a game for 10,000 turns
+for (i in 1:10000) {
+  x <- play_solo(board)
+  turn_vec[i] <- x$turns
+  chute_total <- chute_total + x$chute_tally
+  ladder_total <- ladder_total + x$ladder_tally
+}
+```
+
+
+- Create a histogram (breaks = 50) of the turns.
+
+```{r}
+hist(turn_vec, breaks = 50, col = rainbow(7), 
+     main = "Histogram of Turns in 10,000 Games", 
+     xlab = "Number of Turns")
+```
+
+\pagebreak
+- Find the minimum number of turns. How many times out of 10,000 did a game finish with the minimum number of turns?
+
+```{r}
+min(turn_vec)
+sum(turn_vec == min(turn_vec))
+```
+
+- Find the maximum number of turns.
+```{r}
+max(turn_vec)
+```
+
+
+- What is the median number of turns?
+```{r}
+median(turn_vec)
+```
+
+- What is the mean number of turns?
+```{r}
+mean(turn_vec)
+```
+
+- What proportion of games take 100 or more turns to complete?
+```{r}
+sum(turn_vec >= 100) / 10000
+```
+
+- What proportion of games take 10 or fewer turns to complete?
+```{r}
+sum(turn_vec <= 10) / 10000
+```
+
+- What proportion of games utilize ladder 9 (the shortcut to win on space 80)?
+```{r}
+ladder_total[9] / sum(ladder_total)
+```
+
+\pagebreak
+- Create a barplot of the relative frequency of how often each chute is utilized.
+```{r}
+barplot(chute_total / sum(chute_total), col = rainbow(9), 
+        xlab = "Number of chutes", ylab = "Relative Frequency")
+title("Relative Frequency of each Chute")
+axis(1, seq(0.7, 12.3, 1.2), 1:10)
+```
+
+\pagebreak
+- Create a barplot of the relative frequency of how often each ladder is utilized. 
+```{r}
+barplot(ladder_total / sum(ladder_total), col = rainbow(9), 
+        xlab = "Number of ladders", ylab = "Relative Frequency")
+title("Relative Frequency of each Ladder")
+axis(1, seq(0.7, 11.1, 1.2), 1:9)
+```
+
+
+\pagebreak
+
+# Heat Maps of the game board for each rolls 
+On the datagenetics web page, under the section “Transition Matrix” there are plots showing a ‘heat map’ of which squares are landed on after one turn, after two turns, after three rolls, etc. Recreated this plot in own codes. 
+
+```{r, error = TRUE}
+## Numbering axis for each box
+label <- 1:100
+# Reorder numbers 
+  i <- 1
+  while(i < 10) {
+    label[seq((i * 10) + 1, (i + 1)* 10, 1)] <- rev(seq((i * 10) + 1, (i + 1)* 10, 1))
+    i <- i + 2
+  }
+# Create a list to store a location for each label
+  number <- list(label)
+  j = 1
+  for (y in 0:9) {
+    for (x in 0:9) {
+      number[[label[j]]] <- c(x, y)
+      j <- j + 1
+    }
+  }
+  
+# Input Ladder and Chutes
+ladders <- list(c(1, 38), c(4, 14), c(9, 31), c(21, 42), c(28, 84), c(36, 44), 
+                               c(51, 67), c(71, 91), c(80, 100))
+chutes <- list(c(16, 6), c(47, 26), c(49, 11), c(56, 53), c(62, 19), c(64,60),
+                              c(87, 24), c(93, 73), c(95, 75), c(98, 78))
+# Get the start and end number of ladder 
+ladder_start <- numeric(length(ladders))
+ladder_end <- numeric(length(ladders))
+for(i in seq_len(length(ladders))) {
+  ladder_start[i] <- ladders[[i]][1]
+  ladder_end[i] <- ladders[[i]][2]
+}
+# Get the start and end number of chute
+chute_start <- numeric(length(chutes))
+chute_end <- numeric(length(chutes))
+for(i in seq_len(length(chutes))) {
+  chute_start[i] <- chutes[[i]][1]
+  chute_end[i] <- chutes[[i]][2]
+}
+
+# Function to check ladder or chute 
+check <- function(position) {
+  if(any(ladder_start %in% position)) {
+    indice <- which(ladder_start %in% position)
+    position <- ladder_end[indice]
+  }
+  if(any(chute_start %in% position)) {
+    indice <- which(chute_start %in% position)
+    position <- chute_end[indice]
+  }
+  else {position <- position}
+}
+
+
+Color_plot <- function(number, turns) {
+  # Making a plot 
+  plot.new()
+  plot.window(xlim = c(0,10), ylim = c(0,10), asp = 1)
+  for (i in 0:10) {
+    segments(x0 = i, y0 = 0, x1 = i, y1 = 10)
+    segments (x0 = 0, y0 = i, x1 = 10, y1 = i)
+  }
+
+  # Assign probability 
+  prob_assign <- function(probability) {
+    probability / sum(probability)
+  }
+  
+  move_log <- numeric(100 * turns * 6)
+  
+  # What Turns
+  a <- 1
+  repeat {
+    probability <- numeric(100)
+    for (i in 1:6) {
+      move_log[i] <- i
+      move_log[i] <- check(move_log[i])
+      probability[move_log[i]] <- probability[move_log[i]] + 1
+    }
+    probability <- prob_assign(probability)
+      
+    if(turns == 1) {
+      break
+    }
+      
+    move_log <- move_log[move_log > 0]
+    next_move_log <- numeric(0) 
+    temp <- numeric(6)
+      
+    for (i in seq_along(move_log)) {
+      for (j in 1:6) {
+        if (move_log[i] + j == 100) {
+          temp[j] <- 100
+        }
+        else {
+          if (move_log[i] + j > 100) {
+            temp[j] <- move_log[i]
+          }
+          else {
+            temp[j] <- move_log[i] + j
+            temp[j] <- check(temp[j])
+          }
+          probability[temp[j]] <- probability[temp[j]] + 1
+        }
+      }
+      next_move_log <- c(next_move_log, temp[1:6])
+    }
+    
+    move_log <- next_move_log[next_move_log > 0]
+    probability <- prob_assign(probability)
+    a <- a + 1
+    
+    if(a == turns) {
+      break
+    }
+  }
+  
+  
+    # Color
+    for (i in 1:100) {
+    rect(number[[i]][1], number[[i]][2], number[[i]][1] + 1, number[[i]][2] + 1, 
+         col = adjustcolor("red", (probability[i] * 6)))
+    }
+}
+```
+
+\pagebreak
+One Roll
+```{r, error = TRUE}
+Color_plot(number, 1)
+```
+
+\pagebreak
+Two Rolls
+```{r, error = TRUE}
+Color_plot(number, 2)
+```
+
+\pagebreak
+Three Rolls
+```{r, error = TRUE}
+Color_plot(number, 3)
+```
+
+\pagebreak
+Four Rolls
+```{r, error = TRUE}
+Color_plot(number, 4)
+```
+
+\pagebreak
+Five Rolls
+```{r, error = TRUE}
+Color_plot(number, 5)
+```
+
+\pagebreak
+Six Rolls
+```{r, error = TRUE}
+Color_plot(number, 6)
+```
+
+\pagebreak
+Seven Rolls
+```{r, error = TRUE}
+Color_plot(number, 7)
+```
+
