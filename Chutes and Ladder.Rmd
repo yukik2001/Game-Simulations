@@ -1,5 +1,5 @@
 ---
-title: "Stats 102A - Homework 2 - Output File"
+title: "Chutes and Ladder Project"
 author: "Yuki Kitamura"
 output: pdf_document
 ---
