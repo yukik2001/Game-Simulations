@@ -3,6 +3,7 @@ show_board <- function(board) {
   # Create a board with right dimensions
   plot.new()
   plot.window(xlim = c(0,board[[1]][1]), ylim = c(0,board[[1]][2]), asp = 1)
+  
   # Vertical lines
   for (i in seq(0, board[[1]][1], by = 1)) {
     segments(x0 = i, y0 = 0, x1 = i, y1 = board[[1]][2])
@@ -14,12 +15,14 @@ show_board <- function(board) {
   
   # Total number of labels 
   label <- c(1:(board[[1]][1] * board[[1]][2]))
+  
   # Reorder numbers 
   i <- 1
   while(i < board[[1]][2]) {
     label[seq((i * board[[1]][1]) + 1, (i + 1)* board[[1]][1], 1)] <- rev(seq((i * board[[1]][1]) + 1, (i + 1)* board[[1]][1], 1))
     i <- i + 2
   }
+  
   # Create a list to store a location for each label
   number <- list(label)
   j = 1
